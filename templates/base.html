@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Instacart Кабинет{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🛒 Instacart Кабинет</div>
+    <nav class="menu">
+      <a href="{{ url_for('index') }}">Кабинет</a>
+      <a href="{{ url_for('history') }}">Мои покупки</a>
+      <a href="{{ url_for('analysis') }}">Анализ питания</a>
+    </nav>
+    <div class="user-box">
+      {% if user_id %}
+        <span class="user-id">Клиент #{{ user_id }}</span>
+        <form method="post" action="{{ url_for('logout') }}" class="inline">
+          <button type="submit" class="btn-link">Выйти</button>
+        </form>
+      {% else %}
+        <span class="muted">Не авторизован</span>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="container">
+    {% if error %}
+      <div class="card error-card">⚠️ {{ error }}</div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    Пушкарева Арина, Серебряков Всеволод, Фролов Федор
+  </footer>
+</body>
+</html>

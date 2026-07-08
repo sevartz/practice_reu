@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Кабинет · Instacart{% endblock %}
+
+{% block content %}
+  <div class="card hero">
+    <h1>Личный кабинет покупателя</h1>
+    <p class="muted">
+      Введите ваш <b>user_id</b>, чтобы посмотреть любимые товары,
+      персональные рекомендации и аналитику заказов.
+    </p>
+
+    {% if user_id %}
+      <p class="ok">Вы авторизованы как клиент #{{ user_id }}.</p>
+      <div class="actions">
+        <a class="btn" href="{{ url_for('history') }}">Мои покупки →</a>
+        <a class="btn btn-outline" href="{{ url_for('analysis') }}">Анализ питания →</a>
+      </div>
+    {% else %}
+      <form method="post" action="{{ url_for('login') }}" class="login-form">
+        <input type="number" name="user_id" placeholder="Например, 1" required>
+        <button type="submit" class="btn">Войти</button>
+      </form>
+      <p class="hint muted">Подсказка: в базе есть клиент с user_id = 1.</p>
+    {% endif %}
+  </div>
+{% endblock %}
