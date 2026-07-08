@@ -1,0 +1,155 @@
+
+:root {
+  --green: #2e9e5b;
+  --green-dark: #1f7a44;
+  --bg: #f4f7f5;
+  --card: #ffffff;
+  --text: #233027;
+  --muted: #6b7c70;
+  --border: #e2e8e4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Nunito", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--green);
+  color: #fff;
+  padding: 14px 24px;
+}
+.brand { font-weight: 800; font-size: 20px; }
+.menu { display: flex; gap: 18px; flex: 1; }
+.menu a { color: #fff; text-decoration: none; font-weight: 600; opacity: 0.9; }
+.menu a:hover { opacity: 1; text-decoration: underline; }
+.user-box { display: flex; align-items: center; gap: 12px; }
+.user-id { font-weight: 700; }
+
+
+.container { max-width: 920px; margin: 28px auto; padding: 0 16px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+.hero h1 { margin-top: 0; }
+
+h1 { font-size: 26px; }
+h2 { font-size: 20px; margin-top: 0; }
+
+.muted { color: var(--muted); }
+.ok { color: var(--green-dark); font-weight: 700; }
+.hint { font-size: 14px; }
+
+
+.btn {
+  display: inline-block;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover { background: var(--green-dark); }
+.btn-outline {
+  background: #fff;
+  color: var(--green-dark);
+  border: 2px solid var(--green);
+}
+.btn-link {
+  background: none; border: none; color: #fff;
+  text-decoration: underline; cursor: pointer; font-size: 15px;
+}
+.actions { display: flex; gap: 12px; margin-top: 16px; }
+.inline { display: inline; margin: 0; }
+
+.login-form { display: flex; gap: 10px; margin-top: 14px; }
+.login-form input {
+  padding: 11px 12px; font-size: 16px;
+  border: 1px solid var(--border); border-radius: 10px; width: 220px;
+}
+
+
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+th, td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; }
+th { color: var(--muted); font-weight: 700; }
+tr:hover td { background: #f6faf7; }
+
+.llm-card { border-left: 4px solid var(--green); }
+.recommendation { font-size: 16px; line-height: 1.6; white-space: pre-wrap; }
+.prompt-details { margin-top: 12px; }
+pre {
+  white-space: pre-wrap; background: #f6f8f7;
+  padding: 12px; border-radius: 8px; font-size: 14px;
+}
+
+
+.badge {
+  font-size: 12px; font-weight: 700; padding: 3px 9px;
+  border-radius: 20px; vertical-align: middle; margin-left: 6px;
+}
+.badge-cache { background: #fff3d6; color: #9a6b00; }
+.badge-fresh { background: #d9f3e3; color: var(--green-dark); }
+
+
+.stats { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.stat {
+  flex: 1; min-width: 140px; text-align: center;
+  background: #f6faf7; border-radius: 12px; padding: 16px;
+}
+.stat-value { font-size: 30px; font-weight: 800; color: var(--green-dark); }
+.stat-label { color: var(--muted); font-size: 14px; }
+
+.result { margin-top: 14px; }
+.bmi-form { display: flex; gap: 10px; flex-wrap: wrap; }
+.bmi-form input {
+  padding: 11px 12px; font-size: 16px; width: 150px;
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.error { color: #b00020; font-weight: 700; }
+
+
+.error-card { border-left: 4px solid #c0392b; color: #922b21; }
+
+.heatmap { margin: 12px 0 4px; overflow-x: auto; }
+.hm-row { display: flex; }
+.hm-corner { width: 28px; }
+.hm-hour {
+  width: 20px; text-align: center; font-size: 10px; color: var(--muted);
+  line-height: 16px;
+}
+.hm-day {
+  width: 28px; font-size: 12px; color: var(--muted); font-weight: 700;
+  line-height: 20px;
+}
+.hm-cell {
+  width: 20px; height: 20px; border: 1px solid #eef3ef; box-sizing: border-box;
+}
+
+.cart-cols { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+.cart-col {
+  flex: 1; min-width: 220px; background: #f6faf7;
+  border-radius: 12px; padding: 12px 16px;
+}
+.cart-col h3 { margin-top: 0; }
+.cart-col ul { padding-left: 18px; margin: 8px 0; }
+.cart-col li { margin: 4px 0; }
+
+.footer { text-align: center; color: var(--muted); padding: 24px; font-size: 14px; }

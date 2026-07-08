@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Аналитика · Instacart{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h1>Аналитика заказов</h1>
+    <p class="muted">
+      Три сервиса на данных Instacart. Нажмите кнопку — соберём данные из Loginom
+      и попросим нейросеть Kimi прокомментировать.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>⚓ Якорные товары</h2>
+    <p class="muted">Что вы покупаете снова и снова — самые «верные» товары корзины.</p>
+    <form method="post" action="{{ url_for('analysis_anchors') }}">
+      <button type="submit" class="btn">Показать якоря</button>
+    </form>
+    {% if anchors %}
+      {% if anchors.error %}
+        <p class="error">{{ anchors.error }}</p>
+      {% else %}
+        <div class="result">
+          <p class="muted">Средняя доля повторных покупок: <b>{{ anchors.reorder_share }}%</b></p>
+          <table>
+            <thead>
+              <tr><th>#</th><th>Товар</th><th>Отдел</th><th>Куплено</th><th>Повторных</th></tr>
+            </thead>
+            <tbody>
+              {% for a in anchors.anchors %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ a.product_name }}</td>
+                <td>{{ a.department_rus }}</td>
+                <td>{{ a.times_bought }}</td>
+                <td>{{ a.reorder_rate }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <span class="badge {{ 'badge-cache' if anchors.from_cache else 'badge-fresh' }}">
+            {{ 'из кэша' if anchors.from_cache else 'свежий ответ' }}
+          </span>
+          <p class="recommendation">{{ anchors.answer }}</p>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>🕒 Ритм и лучшее время заказов</h2>
+    <p class="muted">Как часто и когда вы заказываете — прогноз следующего заказа.</p>
+    <form method="post" action="{{ url_for('analysis_rhythm') }}">
+      <button type="submit" class="btn">Показать ритм</button>
+    </form>
+    {% if rhythm %}
+      {% if rhythm.error %}
+        <p class="error">{{ rhythm.error }}</p>
+      {% else %}
+        <div class="result">
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value">{{ rhythm.avg_days }}</div>
+              <div class="stat-label">дней между заказами (в среднем)</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" style="font-size:20px">{{ rhythm.top_day_human }}</div>
+              <div class="stat-label">любимый день заказа</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">{{ rhythm.top_hour }}:00</div>
+              <div class="stat-label">любимый час заказа</div>
+            </div>
+          </div>
+
+          <h3>Когда вы обычно заказываете</h3>
+          <div id="heatmap" class="heatmap"></div>
+
+          <span class="badge {{ 'badge-cache' if rhythm.from_cache else 'badge-fresh' }}">
+            {{ 'из кэша' if rhythm.from_cache else 'свежий ответ' }}
+          </span>
+          <p class="recommendation">{{ rhythm.answer }}</p>
+        </div>
+
+        <script>
+          const points = {{ rhythm.heat_points | tojson }};
+          const dowRus = {{ rhythm.dow_rus | tojson }};
+          const grid = Array.from({length: 7}, () => Array(24).fill(0));
+          let maxV = 1;
+          for (const p of points) {
+            grid[p.y][p.x] = p.v;
+            if (p.v > maxV) maxV = p.v;
+          }
+
+          const box = document.getElementById("heatmap");
+          let html = '<div class="hm-row"><div class="hm-corner"></div>';
+          for (let h = 0; h < 24; h++) html += `<div class="hm-hour">${h}</div>`;
+          html += '</div>';
+          for (let d = 0; d < 7; d++) {
+            html += `<div class="hm-row"><div class="hm-day">${dowRus[d].slice(0,2)}</div>`;
+            for (let h = 0; h < 24; h++) {
+              const v = grid[d][h];
+              const alpha = v ? (0.15 + 0.85 * v / maxV).toFixed(2) : 0;
+              const bg = v ? `background: rgba(46,158,91,${alpha})` : "";
+              html += `<div class="hm-cell" style="${bg}" title="${dowRus[d]} ${h}:00 — ${v} заказ(ов)"></div>`;
+            }
+            html += '</div>';
+          }
+          box.innerHTML = html;
+        </script>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>🛒 Что вы кладёте в корзину первым</h2>
+    <p class="muted">Приоритеты (must-have) против импульсных покупок в конце корзины.</p>
+    <form method="post" action="{{ url_for('analysis_cart') }}">
+      <button type="submit" class="btn">Разобрать корзину</button>
+    </form>
+    {% if cart %}
+      {% if cart.error %}
+        <p class="error">{{ cart.error }}</p>
+      {% else %}
+        <div class="result">
+          <div class="cart-cols">
+            <div class="cart-col">
+              <h3>✅ Кладёте первыми (приоритет)</h3>
+              {% if cart.must_have %}
+                <ul>
+                  {% for c in cart.must_have %}
+                    <li>{{ c.product_name }} <span class="muted">· поз. {{ c.avg_position }}</span></li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="muted">Нет явных приоритетов.</p>
+              {% endif %}
+            </div>
+            <div class="cart-col">
+              <h3>🎯 Берёте под настроение (импульс)</h3>
+              {% if cart.impulse %}
+                <ul>
+                  {% for c in cart.impulse %}
+                    <li>{{ c.product_name }} <span class="muted">· поз. {{ c.avg_position }}</span></li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="muted">Импульсных покупок не видно.</p>
+              {% endif %}
+            </div>
+          </div>
+          <span class="badge {{ 'badge-cache' if cart.from_cache else 'badge-fresh' }}">
+            {{ 'из кэша' if cart.from_cache else 'свежий ответ' }}
+          </span>
+          <p class="recommendation">{{ cart.answer }}</p>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}

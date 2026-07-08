@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Мои покупки · Instacart{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h1>Мои покупки</h1>
+    <p class="muted">Топ-10 любимых товаров клиента #{{ user_id }} и их анализ.</p>
+  </div>
+
+  {% if products %}
+    <div class="card">
+      <h2>Топ товаров</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Товар</th>
+            <th>Отдел</th>
+            <th>Категория (aisle)</th>
+            <th>Куплено раз</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ p.product_name }}</td>
+            <td>{{ p.department_rus }}</td>
+            <td>{{ p.aisle }}</td>
+            <td>{{ p.order_count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Что в корзине</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">{{ analysis.healthy_count }}</div>
+          <div class="stat-label">покупок полезного/нейтрального</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">{{ analysis.junk_count }}</div>
+          <div class="stat-label">покупок снэков и газировки</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">{{ analysis.junk_share }}%</div>
+          <div class="stat-label">доля вредного</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Сколько раз куплен каждый товар</h2>
+      <canvas id="topChart" height="130"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>Покупки по отделам</h2>
+      <canvas id="depChart" height="130"></canvas>
+    </div>
+
+    <script>
+      const topLabels = {{ analysis.top_labels | tojson }};
+      const topValues = {{ analysis.top_values | tojson }};
+      const depLabels = {{ analysis.by_department.keys() | list | tojson }};
+      const depValues = {{ analysis.by_department.values() | list | tojson }};
+
+      new Chart(document.getElementById("topChart"), {
+        type: "bar",
+        data: { labels: topLabels,
+                datasets: [{ label: "Куплено раз", data: topValues,
+                             backgroundColor: "#2e9e5b", borderRadius: 4 }] },
+        options: { indexAxis: "y",
+                   scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
+                   plugins: { legend: { display: false } } }
+      });
+
+      new Chart(document.getElementById("depChart"), {
+        type: "doughnut",
+        data: { labels: depLabels,
+                datasets: [{ data: depValues,
+                             backgroundColor: ["#2e9e5b","#7bc96f","#f4a261",
+                                               "#e76f51","#5a9bd4","#c39bd3"] }] },
+        options: { plugins: { legend: { position: "right" } } }
+      });
+    </script>
+  {% endif %}
+{% endblock %}
