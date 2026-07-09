@@ -12,7 +12,7 @@ LOGINOM_PACKAGE = os.getenv("LOGINOM_PACKAGE", "instacart_ws_serebryakov_i_arina
 
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY") or os.getenv("nvidia_api", "")
 NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-NVIDIA_MODEL = "deepseek-ai/deepseek-v4-pro"
+NVIDIA_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
 
 FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 
